@@ -1,44 +1,63 @@
-from flask import Flask
-from flask_restful import reqparse, abort, Api, Resource
+from re import M
+from sklearn.naive_bayes import MultinomialNB
+from sklearn.feature_extraction import TfidfVectorizer
 import pickle
-import numpy as np
-from yaml import parse
-from model import NLPModel
+# from util import plot_roc
 
-app = Flask(__name__)
-api = Api(app)
+class NLPModel(object):
 
-model = NLPModel()
+    def __init__(self) -> None:
+        """NLP model
+        Attributes:
+            clf: classifier
+            vectorizer: TFIDF vectorizer
+        """
+        self.clf = MultinomialNB()
+        self.vectorizer = TfidfVectorizer()
 
-model_path = 'lib/models/clasifier.pkl'
+    def vectorizer_fit(self, X):
+        """Fit Vectorizer withtext
+        """
+        self.vectorizer.fit(X)
 
-with open(model_path, 'rb') as f:
-    model.clf = pickle.load(f)
+    def vectorizer_transform(self, X):
+        """Transform the text to TFIDF matrix
+        """
+        X_transform = self.vectorizer.transform(X)
+        return X_transform
 
-parser = reqparse.RequestParser()
-parser.add_argument('query')
+    def train(self, X, y):
+        """Train classifier
+        """
+        self.clf.fit(X, y)
 
-class PredictSentiment(Resource):
-    def get(self):
-        args = parser.parse_args()
-        user_query = args['query']
+    def predict_proba(self, X):
+        """Returns probability for the binary class '1' in a numpy array
+        """
+        y_proba = self.clf.predict_proba(X)
+        return y_proba[:, 1]
 
-        uq_vectorize = model.vectorizer_transform(np.array([user_query]))
-        prediction = model.predict(uq_vectorize)
-        pred_proba = model.predict_proba(uq_vectorize)
+    def predict(self, X):
+        """Return the prediction class in an array
+        """
+        y_pred = self.clf.predict(X)
+        return y_pred
 
-        if prediction == 0:
-            pred_text = 'negative'
-        else:
-            pred_text = 'positive'
+    def pickle_vectorizer(self, path='lib/models/TFIDFVectorizer.pkl'):
+        """Save the vectorizer in pickle format
+        """
+        with open(path, 'wb') as f:
+            pickle.dump(self.vectorizer, f)
+            print("Pickled vectorizer in {}".format(path))
+    
+    def pickle_clf(self, path='lib/models/SentimentClassifier.pkl'):
+        """Save the classifier model in pickle format
+        """
+        with open(path, 'wb') as f:
+            pickle.dump(self.clf, f)
+            print("Pickled classifer in {}".format(path))
 
-        confidence = round(pred_proba[0], 3)
-
-        output = {'prediction': pred_text, 'confidence': confidence}
-
-        return output
-
-api.add_resource(PredictSentiment, '/')
-
-if __name__=='__main__':
-    app.run(debug=True)
+    def plot_roc(self, X, y, size_x, size_y):
+        """Plot the ROC curve for X_test and y_test.
+        """
+        # plot_roc(self.clf, X, y, size_x, size_y)
