@@ -1,6 +1,6 @@
 from re import M
 from sklearn.naive_bayes import MultinomialNB
-from sklearn.feature_extraction import TfidfVectorizer
+from sklearn.feature_extraction.text import TfidfVectorizer
 import pickle
 # from util import plot_roc
 
@@ -16,7 +16,7 @@ class NLPModel(object):
         self.vectorizer = TfidfVectorizer()
 
     def vectorizer_fit(self, X):
-        """Fit Vectorizer withtext
+        """Fit Vectorizer with text
         """
         self.vectorizer.fit(X)
 

@@ -10,10 +10,15 @@ api = Api(app)
 
 model = NLPModel()
 
-model_path = 'lib/models/clasifier.pkl'
+model_path = 'lib/models/SentimentClassifier.pkl'
 
 with open(model_path, 'rb') as f:
     model.clf = pickle.load(f)
+
+vec_path = 'lib/models/TFIDFVectorizer.pkl'
+
+with open(vec_path, 'rb') as f:
+    model.vectorizer = pickle.load(f)
 
 parser = reqparse.RequestParser()
 parser.add_argument('query')
