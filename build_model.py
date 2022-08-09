@@ -22,7 +22,7 @@ def build_model():
     X_train, X_test, y_train, y_test = train_test_split(X, y)
 
     model.train(X_train, y_train)
-    print("Nodel training complete")
+    print("Model training complete")
 
     model.pickle_clf()
     model.pickle_vectorizer()
