@@ -1,6 +1,5 @@
 language: python
 python:
-  - "2.7"
   - "3.8"
   
 
@@ -9,8 +8,7 @@ install:
 
 
 script: 
-  - python3 app.py
-  - curl -X GET http://127.0.0.1:5000/ -d query='that movie was boring'
+  - pytest
   
 branches:
   only:
