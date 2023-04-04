@@ -1,0 +1,19 @@
+language: python
+python:
+  - "3.8"
+  
+
+install:
+  - pip install -r requirements.txt
+
+
+script: 
+  - pytest
+  
+branches:
+  only:
+    - master
+    
+notifications:
+  email:
+    on_success: never

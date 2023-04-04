@@ -1,6 +1,9 @@
 matplotlib
-sklearn
+scikit-learn
 numpy
 scipy
 pandas
 flask
+flask-restful
+pyyaml
+pytest
